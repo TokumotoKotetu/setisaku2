@@ -4,48 +4,70 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    Rotation _rotation;
-    Vector2 _rightHandPos;
-    Vector2 _leftHandPos;
     Transform _transform;
+    Vector3 _rightHandPos;
+    Vector3 _leftHandPos;
     [SerializeField] float _rotationSpeed = 1.0f;
+    public bool _isRightWire = false;
+    public bool _isLeftWire = false;
+    bool _isRightHand = false;
+    bool _isLeftHand = false;
+    Rigidbody2D _rbody;
+    [SerializeField] GameObject _hingeJoint;
     void Start()
     {
-        _rotation = Rotation.Stop;
         _transform = GetComponent<Transform>();
+        _rbody = GetComponent<Rigidbody2D>();
+        _isRightHand = false;
+        _isLeftHand = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        switch (_rotation)
-        {
-            case Rotation.Stop:
-                Debug.Log("–³‰ñ“]");
-                break;
-            case Rotation.RightRot:
-                Debug.Log("ŽžŒv‰ñ‚è");
-                _transform.RotateAround(_rightHandPos, new Vector3(0,0,-1), (360 / _rotationSpeed) * Time.deltaTime);
-                break;
-            case Rotation.LeftRot:
-                Debug.Log("”½ŽžŒv‰ñ‚è");
-                _transform.RotateAround(_leftHandPos, new Vector3(0, 0, 1), (360 / _rotationSpeed) * Time.deltaTime);
-                break;
-        }
+       
 
-        _rightHandPos = transform.GetChild(0).gameObject.transform.position;
-        _leftHandPos = transform.GetChild(1).gameObject.transform.position;
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (_isRightWire && !_isLeftHand)
+            {
+                _isRightHand = true;
+                _rightHandPos = _transform.transform.Find("RightHand").gameObject.transform.position;
+                Instantiate(_hingeJoint, _rightHandPos, Quaternion.identity);
+            }
+        }
 
         if (Input.GetKey(KeyCode.E))
         {
-            _rotation = Rotation.RightRot;
+            if(_isRightWire && !_isLeftHand)
+                _rbody.velocity = transform.up * _rotationSpeed;
+        }
+
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            _isRightHand = false;
+            Destroy(GameObject.FindGameObjectWithTag("JointObj"));
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            if (_isLeftWire && !_isRightHand)
+            {
+                _isLeftHand = true;
+                _rightHandPos = _transform.transform.Find("LeftHand").gameObject.transform.position;
+                Instantiate(_hingeJoint, _rightHandPos, Quaternion.identity);
+            }
         }
 
         if (Input.GetKey(KeyCode.Q))
         {
-            _rotation = Rotation.LeftRot;
+            if(_isLeftWire && !_isRightHand)
+                _rbody.velocity = transform.up * _rotationSpeed;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Q))
+        {
+            _isLeftHand = false;
+            Destroy(GameObject.FindGameObjectWithTag("JointObj"));
         }
     }
-
-    enum Rotation{Stop, RightRot, LeftRot}
 }
