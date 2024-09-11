@@ -64,7 +64,8 @@ public class PlayerController : MonoBehaviour
         {
             _isRightHand = false;
             Destroy(GameObject.FindGameObjectWithTag("JointObj"));
-            _rbody.AddForce(transform.up * _jumpSpeed);
+            if(_isRightWire)
+                _rbody.AddForce(transform.up * _jumpSpeed);
         }
 
         if (Input.GetKeyDown(KeyCode.Q))
@@ -87,7 +88,8 @@ public class PlayerController : MonoBehaviour
         {
             _isLeftHand = false;
             Destroy(GameObject.FindGameObjectWithTag("JointObj"));
-            _rbody.AddForce(transform.up * _jumpSpeed);
+            if(_isLeftWire)
+                _rbody.AddForce(transform.up * _jumpSpeed);
         }
     }
 
