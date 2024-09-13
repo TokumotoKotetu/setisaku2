@@ -19,6 +19,9 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D _rbody;
     [SerializeField] GameObject _hingeJoint;
     public bool _isCleared = false;
+    float _timer = 0;
+    [SerializeField] float _jumpCoolTime = 1;
+    [SerializeField] float _jumpPower;
     void Start()
     {
         _transform = GetComponent<Transform>();
@@ -35,6 +38,7 @@ public class PlayerController : MonoBehaviour
         {
             SceneManager.LoadScene("GameScene");
         }
+        _timer += Time.deltaTime;
     }
 
     private void FixedUpdate()
@@ -90,6 +94,12 @@ public class PlayerController : MonoBehaviour
             Destroy(GameObject.FindGameObjectWithTag("JointObj"));
             if(_isLeftWire)
                 _rbody.AddForce(transform.up * _jumpSpeed);
+        }
+
+        if(Input.GetKey(KeyCode.Space) && _timer > _jumpCoolTime)
+        {
+            _timer = 0;
+            _rbody.AddForce(Vector3.up * _jumpPower);
         }
     }
 
